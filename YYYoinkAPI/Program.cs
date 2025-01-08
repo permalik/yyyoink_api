@@ -1,8 +1,10 @@
 using Scalar.AspNetCore;
+using YYYoinkAPI.Services.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 {
     builder.Services.AddControllers();
+    builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddOpenApi();
 }
 
@@ -18,7 +20,7 @@ var app = builder.Build();
         });
     }
 
-    app.UseHttpsRedirection();
+    // app.UseHttpsRedirection();
     app.MapControllers();
     app.Run();
 }

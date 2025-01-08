@@ -1,13 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
 using YYYoinkAPI.Contracts.User;
 using YYYoinkAPI.Models;
+using YYYoinkAPI.Services.Users;
 
 namespace YYYoinkAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class UserController : ControllerBase
+public class UsersController : ControllerBase
 {
+    private readonly IUserService _userService;
+
+    public UsersController(IUserService userService)
+    {
+        _userService = userService;
+    }
+
     [HttpPost]
     public IActionResult CreateUser(CreateUserRequest request)
     {
@@ -16,6 +24,8 @@ public class UserController : ControllerBase
             request.Email,
             request.Password
         );
+
+        _userService.CreateUser(user);
 
         var response = new UserResponse(
             user.Id,
@@ -27,13 +37,21 @@ public class UserController : ControllerBase
             actionName: nameof(GetUser),
             routeValues: new { id = user.Id },
             value: response
-            );
+        );
     }
 
     [HttpGet("{id:guid}")]
     public IActionResult GetUser(Guid id)
     {
-        return Ok(id);
+        User user = _userService.GetUser(id);
+
+        var response = new UserResponse(
+            user.Id,
+            user.Email,
+            user.Password
+        );
+
+        return Ok(response);
     }
 
     [HttpPut("{id:guid}")]
