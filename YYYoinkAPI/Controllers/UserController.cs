@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using YYYoinkAPI.Contracts.User;
+using YYYoinkAPI.Models;
 
 namespace YYYoinkAPI.Controllers;
 
@@ -7,10 +8,26 @@ namespace YYYoinkAPI.Controllers;
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
-    [HttpPost()]
+    [HttpPost]
     public IActionResult CreateUser(CreateUserRequest request)
     {
-        return Ok(request);
+        var user = new User(
+            Guid.NewGuid(),
+            request.Email,
+            request.Password
+        );
+
+        var response = new UserResponse(
+            user.Id,
+            user.Email,
+            user.Password
+        );
+
+        return CreatedAtAction(
+            actionName: nameof(GetUser),
+            routeValues: new { id = user.Id },
+            value: response
+            );
     }
 
     [HttpGet("{id:guid}")]
