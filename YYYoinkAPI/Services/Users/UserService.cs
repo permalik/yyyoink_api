@@ -14,4 +14,14 @@ public class UserService : IUserService
     {
         return _users[id];
     }
+
+    public void UpdateUser(User user)
+    {
+        _users[user.Id] = user;
+    }
+
+    public void DeleteUser(Guid id)
+    {
+        _users.Remove(id);
+    }
 }

@@ -54,15 +54,25 @@ public class UsersController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPut("{id:guid}")]
+    [HttpPatch("{id:guid}")]
     public IActionResult UpdateUser(Guid id, UpdateUserRequest request)
     {
-        return Ok(request);
+        var user = new User(
+            id,
+            request.Email,
+            request.Password
+        );
+
+        _userService.UpdateUser(user);
+        
+        return NoContent();
     }
 
     [HttpDelete("{id:guid}")]
     public IActionResult DeleteUser(Guid id)
     {
-        return Ok(id);
+        _userService.DeleteUser(id);
+        
+        return NoContent();
     }
 }
