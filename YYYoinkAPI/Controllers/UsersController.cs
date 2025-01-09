@@ -1,13 +1,13 @@
+using ErrorOr;
 using Microsoft.AspNetCore.Mvc;
 using YYYoinkAPI.Contracts.User;
 using YYYoinkAPI.Models;
+using YYYoinkAPI.ServiceErrors;
 using YYYoinkAPI.Services.Users;
 
 namespace YYYoinkAPI.Controllers;
 
-[ApiController]
-[Route("[controller]")]
-public class UsersController : ControllerBase
+public class UsersController : APIController
 {
     private readonly IUserService _userService;
 
@@ -25,33 +25,23 @@ public class UsersController : ControllerBase
             request.Password
         );
 
-        _userService.CreateUser(user);
+        ErrorOr<Created> createUserResult = _userService.CreateUser(user);
 
-        var response = new UserResponse(
-            user.Id,
-            user.Email,
-            user.Password
-        );
-
-        return CreatedAtAction(
-            actionName: nameof(GetUser),
-            routeValues: new { id = user.Id },
-            value: response
+        return createUserResult.Match(
+            created => CreatedAtGetUser(user),
+            errors => Problem(errors)
         );
     }
 
     [HttpGet("{id:guid}")]
     public IActionResult GetUser(Guid id)
     {
-        User user = _userService.GetUser(id);
+        ErrorOr<User> getUserResult = _userService.GetUser(id);
 
-        var response = new UserResponse(
-            user.Id,
-            user.Email,
-            user.Password
+        return getUserResult.Match(
+            user => Ok(MapUserResponse(user)),
+            errors => Problem(errors)
         );
-
-        return Ok(response);
     }
 
     [HttpPatch("{id:guid}")]
@@ -63,16 +53,41 @@ public class UsersController : ControllerBase
             request.Password
         );
 
-        _userService.UpdateUser(user);
-        
-        return NoContent();
+        ErrorOr<Updated> updatedUserResult = _userService.UpdateUser(user);
+
+        return updatedUserResult.Match(
+            updated => NoContent(),
+            errors => Problem(errors)
+        );
     }
 
     [HttpDelete("{id:guid}")]
     public IActionResult DeleteUser(Guid id)
     {
-        _userService.DeleteUser(id);
-        
-        return NoContent();
+        ErrorOr<Deleted> deleteUserResult = _userService.DeleteUser(id);
+
+        return deleteUserResult.Match(
+            deleted => NoContent(),
+            errors => Problem(errors)
+        );
+    }
+
+    private static UserResponse MapUserResponse(User user)
+    {
+        var response = new UserResponse(
+            user.Id,
+            user.Email,
+            user.Password
+        );
+        return response;
+    }
+
+    private CreatedAtActionResult CreatedAtGetUser(User user)
+    {
+        return CreatedAtAction(
+            actionName: nameof(GetUser),
+            routeValues: new { id = user.Id },
+            value: MapUserResponse(user)
+        );
     }
 }
