@@ -1,3 +1,5 @@
+using ErrorOr;
+
 namespace YYYoinkAPI.Models;
 
 public class User
@@ -11,5 +13,17 @@ public class User
         Id = id;
         Email = email;
         Password = password;
+    }
+
+    public static ErrorOr<User> Create(
+        string email,
+        string password
+    )
+    {
+        return new User(
+            Guid.NewGuid(),
+            email,
+            password
+        );
     }
 }
