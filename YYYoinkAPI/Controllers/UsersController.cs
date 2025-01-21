@@ -2,7 +2,6 @@ using ErrorOr;
 using Microsoft.AspNetCore.Mvc;
 using YYYoinkAPI.Contracts.User;
 using YYYoinkAPI.Models;
-using YYYoinkAPI.ServiceErrors;
 using YYYoinkAPI.Services.Users;
 
 namespace YYYoinkAPI.Controllers;
