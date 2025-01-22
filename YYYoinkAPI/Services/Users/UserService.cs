@@ -10,8 +10,25 @@ public class UserService : IUserService
     public ErrorOr<Created> CreateUser(User user)
     {
         _users.Add(user.Id, user);
-
+        
         return Result.Created;
+    }
+
+    public ErrorOr<User> LoginUser(string email, string password)
+    {
+        var user = _users.Values.FirstOrDefault(u => u.Email == email);
+
+        if (user is null)
+        {
+            return UserErrors.NotFound;
+        }
+
+        if (user.Password != password)
+        {
+            return UserErrors.Unauthorized;
+        }
+
+        return user;
     }
 
     public ErrorOr<User> GetUser(Guid id)

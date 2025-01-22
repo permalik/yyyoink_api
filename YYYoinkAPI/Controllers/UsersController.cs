@@ -32,6 +32,17 @@ public class UsersController : APIController
         );
     }
 
+    [HttpPost("login")]
+    public IActionResult LoginUser(LoginUserRequest request)
+    {
+        ErrorOr<User> loginUserResult = _userService.LoginUser(request.Email, request.Password);
+        
+        return loginUserResult.Match(
+            loggedIn => Ok(MapUserResponse(loggedIn)),
+            errors => Problem(errors)
+        );
+    }
+
     [HttpGet("{id:guid}")]
     public IActionResult GetUser(Guid id)
     {
