@@ -2,7 +2,7 @@ using Confluent.Kafka;
 using System.Text.Json;
 using YYYoinkAPI.Models;
 
-class AccountProducer
+class AccountProducerService
 {
     // private readonly string _bootstrapServers;
 
@@ -28,6 +28,7 @@ class AccountProducer
         var accountAction = new CreateAccountAction(
             Guid.NewGuid(),
             "create_account",
+            // TODO: set valid timezone not utc
             DateTime.UtcNow,
             topic,
             accountData

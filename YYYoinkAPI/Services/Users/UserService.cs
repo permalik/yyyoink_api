@@ -9,7 +9,7 @@ public class UserService : IUserService
     private static readonly Dictionary<Guid, User> _users = new();
     public ErrorOr<Created> CreateUser(User user)
     {
-        var accountProducer = new AccountProducer();
+        var accountProducer = new AccountProducerService();
         accountProducer.Produce(user.Email, user.Password);
         
         // _users.Add(user.Id, user);

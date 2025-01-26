@@ -18,6 +18,10 @@ public class UsersController : APIController
     [HttpPost]
     public IActionResult CreateUser(CreateUserRequest request)
     {
+        var accountProducer = new AccountProducerService();
+
+        accountProducer.Produce(request.Email, request.Password);
+        
         var user = new User(
             Guid.NewGuid(),
             request.Email,

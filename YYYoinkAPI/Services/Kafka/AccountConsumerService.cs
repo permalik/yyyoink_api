@@ -2,7 +2,7 @@ using Confluent.Kafka;
 using System;
 using System.Threading;
 
-class AccountConsumer
+class AccountConsumerService
 {
     static void Main(string[] args)
     {
