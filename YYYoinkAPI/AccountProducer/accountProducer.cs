@@ -1,54 +1,73 @@
 using Confluent.Kafka;
-using System;
+using System.Text.Json;
+using YYYoinkAPI.Models;
 
 class AccountProducer
 {
-    static void Main(string[] args)
-    {
-        const string topic = "account_events";
+    // private readonly string _bootstrapServers;
 
-        string[] accounts =
-        [
-            "user_one@gmail.com;qwer1234!",
-            "user_two@gmail.com;qwer1234!",
-            "user_three@gmail.com;qwer1234!"
-        ];
+    // public AccountProducer()
+    // {
+        // if (string.IsNullOrWhiteSpace(bootstrapServers))
+        // {
+        //     throw new ArgumentException("Bootstrap servers must be provided.", nameof(bootstrapServers));
+        // }
+        //
+        // _bootstrapServers = bootstrapServers;
+    // }
+    
+    public bool Produce(string email, string password)
+    {
+        const string topic = "account_actions";
+
+        var accountData = new CreateAccountAction.AccountData(
+            email,
+            password
+        );
+
+        var accountAction = new CreateAccountAction(
+            Guid.NewGuid(),
+            "create_account",
+            DateTime.UtcNow,
+            topic,
+            accountData
+        );
+
+        var actionMessage = JsonSerializer.Serialize(accountAction, new JsonSerializerOptions
+        {
+            WriteIndented = true
+        });
 
         var config = new ProducerConfig
         {
             BootstrapServers = "localhost:9094"
         };
 
+        var completionStatus = false;
+
         using (var producer = new ProducerBuilder<string, string>(config).Build())
         {
-            var numProduced = 0;
-            const int numMessages = 3;
-
-            for (int i = 0; i < numMessages; i++)
-            {
-                var account = accounts[i];
-
-                producer.Produce(topic, new Message<string, string>
+            producer.Produce(topic, new Message<string, string>
+                {
+                    Key = null,
+                    Value = actionMessage
+                },
+                (deliveryReport) =>
+                {
+                    if (deliveryReport.Error.Code != ErrorCode.NoError)
                     {
-                        Key = null,
-                        Value = account
-                    },
-                    (deliveryReport) =>
+                        Console.WriteLine($"failed to deliver message: {deliveryReport.Error.Reason}");
+                    }
+                    else
                     {
-                        if (deliveryReport.Error.Code != ErrorCode.NoError)
-                        {
-                            Console.WriteLine($"failed to deliver message: {deliveryReport.Error.Reason}");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"produced event to topic {topic}: key = null, value = {account}");
-                            numProduced += 1;
-                        }
-                    });
-            }
-
+                        completionStatus = true;
+                        Console.WriteLine($"produced event to topic {topic}: key = null, value = {actionMessage}");
+                    }
+                });
+            
             producer.Flush(TimeSpan.FromSeconds(10));
-            Console.WriteLine($"{numProduced} messages were produced to topic {topic}");
+            Console.WriteLine($"message produced to topic {topic}");
+            return completionStatus;
         }
     }
 }
