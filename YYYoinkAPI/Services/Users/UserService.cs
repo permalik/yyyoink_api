@@ -9,10 +9,7 @@ public class UserService : IUserService
     private static readonly Dictionary<Guid, User> _users = new();
     public ErrorOr<Created> CreateUser(User user)
     {
-        var accountProducer = new AccountProducerService();
-        accountProducer.Produce(user.Email, user.Password);
-        
-        // _users.Add(user.Id, user);
+        _users.Add(user.Id, user);
         
         return Result.Created;
     }
@@ -46,7 +43,10 @@ public class UserService : IUserService
 
     public ErrorOr<Updated> UpdateUser(User user)
     {
-        _users[user.Id] = user;
+        if (_users.TryGetValue(user.Id, out var currentUser))
+        {
+            _users[user.Id] = user;
+        }
 
         return Result.Updated;
     }
