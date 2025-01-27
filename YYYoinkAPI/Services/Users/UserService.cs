@@ -1,6 +1,7 @@
 using ErrorOr;
 using YYYoinkAPI.Models;
 using YYYoinkAPI.ServiceErrors;
+using YYYoinkAPI.Services.Postgres;
 
 namespace YYYoinkAPI.Services.Users;
 
@@ -14,8 +15,16 @@ public class UserService : IUserService
         return Result.Created;
     }
 
-    public ErrorOr<User> LoginUser(string email, string password)
+    public async Task<ErrorOr<User>> LoginUser(string email, string password)
     {
+        const string connStr = "str";
+        var db = new Database(connStr);
+        var users = await db.GetUserAsync();
+        foreach (var u in users)
+        {
+            Console.WriteLine($"user {u}");
+        }
+        
         var user = _users.Values.FirstOrDefault(u => u.Email == email);
 
         if (user is null)

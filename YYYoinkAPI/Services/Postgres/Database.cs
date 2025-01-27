@@ -4,7 +4,6 @@ namespace YYYoinkAPI.Services.Postgres;
 
 public class Database
 {
-    // const string connectionString = "Host=localhost;Username=tymalik;Password=wHZVp4Yzo4MtnsA4yHm4;Database=yyyoink";
     private readonly string connectionString;
 
     // TODO: convert into primary constructor
@@ -20,11 +19,11 @@ public class Database
         await conn.OpenAsync();
 
         await using (var cmd = new NpgsqlCommand("SELECT * FROM accounts", conn))
-        await using (var reader = await cmd.ExecutReaderAsync())
+        await using (var reader = await cmd.ExecuteReaderAsync())
         {
-            while (await reader.ReaderAsync())
+            while (await reader.ReadAsync())
             {
-                result.Add(reader.GetString(0));
+                result.Add(reader.GetString(2));
             }
         }
 
