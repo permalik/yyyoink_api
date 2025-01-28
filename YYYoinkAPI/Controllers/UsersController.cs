@@ -12,6 +12,12 @@ public class UsersController : APIController
 
     public UsersController(IUserService userService)
     {
+        // TODO: impl assertion
+        if (userService == null)
+        {
+            throw new ArgumentNullException(nameof(userService), "userservice cannot be null");
+        }
+
         _userService = userService;
     }
 
@@ -36,7 +42,7 @@ public class UsersController : APIController
     public Task<IActionResult> LoginUser(LoginUserRequest request)
     {
         Task<ErrorOr<User>> loginUserResult = _userService.LoginUser(request.Email, request.Password);
-        
+
         return loginUserResult.Match(
             loggedIn => Ok(MapUserResponse(loggedIn)),
             errors => Problem(errors)
