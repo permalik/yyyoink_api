@@ -1,10 +1,16 @@
 using Scalar.AspNetCore;
 using YYYoinkAPI.Services.Users;
+using YYYoinkAPI.utils;
+
+var root = Directory.GetCurrentDirectory();
+var dotenv = Path.Combine(root, ".env");
+DotEnv.Load(dotenv);
 
 var CORSPolicy = "cors_policy";
 
 var builder = WebApplication.CreateBuilder(args);
 {
+    builder.Configuration.AddEnvironmentVariables();
     builder.Services.AddCors(
         options =>
         {

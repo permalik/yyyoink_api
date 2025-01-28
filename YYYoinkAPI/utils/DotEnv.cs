@@ -1,5 +1,6 @@
 namespace YYYoinkAPI.utils;
 
+// TODO: update utils dir name
 public static class DotEnv
 {
     public static void Load(string filePath)
@@ -11,16 +12,31 @@ public static class DotEnv
 
         foreach (var line in File.ReadAllLines(filePath))
         {
-            var parts = line.Split(
-                '=',
-                StringSplitOptions.RemoveEmptyEntries
-            );
-            if (parts.Length != 2)
+            var index = line.IndexOf('=');
+            if (index != -1)
             {
-                continue;
+                var key = line[..index];
+                var value = line[(index + 1)..];
+                Environment.SetEnvironmentVariable(key, value);
             }
-
-            Environment.SetEnvironmentVariable(parts[0], parts[1]);
+            else
+            {
+                // Handle lines without an '=' if necessary
+            }
         }
+
+        // foreach (var line in File.ReadAllLines(filePath))
+        // {
+        //     var parts = line.Split(
+        //         '=',
+        //         StringSplitOptions.RemoveEmptyEntries
+        //     );
+        //     if (parts.Length != 2)
+        //     {
+        //         continue;
+        //     }
+        //
+        //     Environment.SetEnvironmentVariable(parts[0], parts[1]);
+        // }
     }
 }
