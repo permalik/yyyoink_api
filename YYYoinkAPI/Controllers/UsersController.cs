@@ -85,7 +85,7 @@ public class UsersController : APIController
     private static UserResponse MapUserResponse(User user)
     {
         var response = new UserResponse(
-            user.Id,
+            user.Uuid,
             user.Email,
             user.Password
         );
@@ -96,7 +96,7 @@ public class UsersController : APIController
     {
         return CreatedAtAction(
             actionName: nameof(GetUser),
-            routeValues: new { id = user.Id },
+            routeValues: new { uuid = user.Uuid },
             value: MapUserResponse(user)
         );
     }

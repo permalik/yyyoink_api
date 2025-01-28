@@ -8,24 +8,23 @@ namespace YYYoinkAPI.Services.Users;
 public class UserService : IUserService
 {
     private static readonly Dictionary<Guid, User> _users = new();
+
     public ErrorOr<Created> CreateUser(User user)
     {
-        _users.Add(user.Id, user);
-        
+        _users.Add(user.Uuid, user);
+
         return Result.Created;
     }
 
     public async Task<ErrorOr<User>> LoginUser(string email, string password)
     {
-        const string connStr = "str";
+        const string connStr = "Host=localhost;Username=tymalik;Password=wHZVp4Yzo4MtnsA4yHm4;Database=yyyoink";
         var db = new Database(connStr);
-        var users = await db.GetUserAsync();
-        foreach (var u in users)
-        {
-            Console.WriteLine($"user {u}");
-        }
-        
-        var user = _users.Values.FirstOrDefault(u => u.Email == email);
+        var user = await db.GetUserAsync();
+        Console.WriteLine($"user email: {user.Email}");
+        Console.WriteLine($"user password: {user.Password}");
+        Console.WriteLine($"user uuid: {user.Uuid}");
+        // var user = _users.Values.FirstOrDefault(u => u.Email == email);
 
         if (user is null)
         {
@@ -52,9 +51,9 @@ public class UserService : IUserService
 
     public ErrorOr<Updated> UpdateUser(User user)
     {
-        if (_users.TryGetValue(user.Id, out var currentUser))
+        if (_users.TryGetValue(user.Uuid, out var currentUser))
         {
-            _users[user.Id] = user;
+            _users[user.Uuid] = user;
         }
 
         return Result.Updated;

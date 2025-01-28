@@ -4,18 +4,19 @@ namespace YYYoinkAPI.Models;
 
 public class User
 {
-    public Guid Id { get; }
+    public Guid Uuid { get; }
     public string Email { get; }
     public string Password { get; }
 
-    public User(Guid id, string email, string password)
+    public User(Guid uuid, string email, string password)
     {
-        Id = id;
+        Uuid = uuid;
         Email = email;
         Password = password;
     }
 
     public static ErrorOr<User> Create(
+        Guid uuid,
         string email,
         string password
     )

@@ -1,7 +1,7 @@
 namespace YYYoinkAPI.Contracts.User;
 
 public record UserResponse(
-    Guid Id,
+    Guid Uuid,
     string Email,
     string Password
 );
