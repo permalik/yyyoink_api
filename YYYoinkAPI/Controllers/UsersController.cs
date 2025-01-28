@@ -17,7 +17,6 @@ public class UsersController : APIController
         {
             throw new ArgumentNullException(nameof(userService), "userservice cannot be null");
         }
-
         _userService = userService;
     }
 

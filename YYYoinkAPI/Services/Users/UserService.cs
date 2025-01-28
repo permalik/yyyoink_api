@@ -18,7 +18,7 @@ public class UserService : IUserService
 
     public async Task<ErrorOr<User>> LoginUser(string email, string password)
     {
-        const string connStr = "Host=localhost;Username=tymalik;Password=wHZVp4Yzo4MtnsA4yHm4;Database=yyyoink";
+        const string connStr = PG_CS;
         var db = new Database(connStr);
         var user = await db.GetUserAsync();
         Console.WriteLine($"user email: {user.Email}");
