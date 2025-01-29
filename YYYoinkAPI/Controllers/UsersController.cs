@@ -17,6 +17,7 @@ public class UsersController : APIController
         {
             throw new ArgumentNullException(nameof(userService), "userservice cannot be null");
         }
+
         _userService = userService;
     }
 
@@ -89,12 +90,11 @@ public class UsersController : APIController
 
     private static UserResponse MapUserResponse(User user)
     {
-        var response = new UserResponse(
+        return new UserResponse(
             user.Uuid,
             user.Email,
             user.Password
         );
-        return response;
     }
 
     private CreatedAtActionResult CreatedAtGetUser(User user)

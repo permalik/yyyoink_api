@@ -21,22 +21,8 @@ public static class DotEnv
             }
             else
             {
-                // Handle lines without an '=' if necessary
+                continue;
             }
         }
-
-        // foreach (var line in File.ReadAllLines(filePath))
-        // {
-        //     var parts = line.Split(
-        //         '=',
-        //         StringSplitOptions.RemoveEmptyEntries
-        //     );
-        //     if (parts.Length != 2)
-        //     {
-        //         continue;
-        //     }
-        //
-        //     Environment.SetEnvironmentVariable(parts[0], parts[1]);
-        // }
     }
 }
