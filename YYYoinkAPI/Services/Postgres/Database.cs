@@ -13,7 +13,7 @@ public class Database
         this.connectionString = connectionString;
     }
 
-    public async Task<User> GetUserAsync()
+    public async Task<User> GetUserAsync(string inputEmail)
     {
         await using var conn = new NpgsqlConnection(connectionString);
         await conn.OpenAsync();
@@ -24,7 +24,8 @@ public class Database
 
         try
         {
-            await using (var cmd = new NpgsqlCommand("SELECT * FROM accounts", conn))
+            string stmt = $"SELECT * FROM accounts WHERE email = {inputEmail}";
+            await using (var cmd = new NpgsqlCommand(stmt, conn))
             await using (var reader = await cmd.ExecuteReaderAsync())
             {
                 if (await reader.ReadAsync())
