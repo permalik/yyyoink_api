@@ -10,7 +10,6 @@ public class APIController : ControllerBase
     protected IActionResult Problem(List<Error> errors)
     {
         var firstError = errors[0];
-
         var statusCode = firstError.Type switch
         {
             ErrorType.NotFound => StatusCodes.Status404NotFound,
@@ -19,7 +18,6 @@ public class APIController : ControllerBase
             ErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
             _ => StatusCodes.Status500InternalServerError
         };
-
         return Problem(statusCode: statusCode, title: firstError.Description);
     }
 }

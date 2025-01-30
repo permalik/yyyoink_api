@@ -8,30 +8,34 @@ namespace YYYoinkAPI.Services.Users;
 public class UserService : IUserService
 {
     private static readonly Dictionary<Guid, User> _users = new();
-
-    public ErrorOr<Created> CreateUser(User user)
+    public async Task<ErrorOr<Created>> CreateUser(User user)
     {
-        _users.Add(user.Uuid, user);
-
+        // TODO: assert
+        string connStr = Environment.GetEnvironmentVariable("PG_CS") ?? string.Empty;
+        var db = new Database(connStr);
+        var createdUser = await db.CreateUserAsync(user);
+        if (createdUser is null)
+        {
+            return UserErrors.NotFound;
+        }
+        Console.WriteLine($"{user.Email} has been created");
         return Result.Created;
     }
 
     public async Task<ErrorOr<User>> LoginUser(string email, string password)
     {
-        var connStr = Environment.GetEnvironmentVariable("PG_CS");
+        // TODO: assert
+        var connStr = Environment.GetEnvironmentVariable("PG_CS") ?? string.Empty;
         var db = new Database(connStr);
         var user = await db.GetUserAsync(email);
-
         if (user is null)
         {
             return UserErrors.NotFound;
         }
-
         if (user.Password != password)
         {
             return UserErrors.Unauthorized;
         }
-
         Console.WriteLine($"{user.Email} has been logged in");
         return user;
     }

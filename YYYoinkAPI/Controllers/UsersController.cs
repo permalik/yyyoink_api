@@ -17,21 +17,18 @@ public class UsersController : APIController
         {
             throw new ArgumentNullException(nameof(userService), "userservice cannot be null");
         }
-
         _userService = userService;
     }
 
     [HttpPost]
-    public IActionResult CreateUser(CreateUserRequest request)
+    public Task<IActionResult> CreateUser(CreateUserRequest request)
     {
         var user = new User(
             Guid.NewGuid(),
             request.Email,
             request.Password
         );
-
-        ErrorOr<Created> createUserResult = _userService.CreateUser(user);
-
+        Task<ErrorOr<Created>> createUserResult = _userService.CreateUser(user);
         return createUserResult.Match(
             created => CreatedAtGetUser(user),
             errors => Problem(errors)
@@ -42,7 +39,6 @@ public class UsersController : APIController
     public Task<IActionResult> LoginUser(LoginUserRequest request)
     {
         Task<ErrorOr<User>> loginUserResult = _userService.LoginUser(request.Email, request.Password);
-
         return loginUserResult.Match(
             loggedIn => Ok(MapUserResponse(loggedIn)),
             errors => Problem(errors)
@@ -53,7 +49,6 @@ public class UsersController : APIController
     public IActionResult GetUser(Guid id)
     {
         ErrorOr<User> getUserResult = _userService.GetUser(id);
-
         return getUserResult.Match(
             user => Ok(MapUserResponse(user)),
             errors => Problem(errors)
@@ -68,9 +63,7 @@ public class UsersController : APIController
             request.Email,
             request.Password
         );
-
         ErrorOr<Updated> updatedUserResult = _userService.UpdateUser(user);
-
         return updatedUserResult.Match(
             updated => NoContent(),
             errors => Problem(errors)
@@ -81,7 +74,6 @@ public class UsersController : APIController
     public IActionResult DeleteUser(Guid id)
     {
         ErrorOr<Deleted> deleteUserResult = _userService.DeleteUser(id);
-
         return deleteUserResult.Match(
             deleted => NoContent(),
             errors => Problem(errors)
@@ -100,7 +92,7 @@ public class UsersController : APIController
     private CreatedAtActionResult CreatedAtGetUser(User user)
     {
         return CreatedAtAction(
-            actionName: nameof(GetUser),
+            actionName: nameof(CreateUser),
             routeValues: new { uuid = user.Uuid },
             value: MapUserResponse(user)
         );

@@ -5,7 +5,7 @@ namespace YYYoinkAPI.Services.Users;
 
 public interface IUserService
 {
-    ErrorOr<Created> CreateUser(User user);
+    Task<ErrorOr<Created>> CreateUser(User user);
     Task<ErrorOr<User>> LoginUser(string email, string password);
     ErrorOr<User> GetUser(Guid id);
     ErrorOr<Updated> UpdateUser(User user);
