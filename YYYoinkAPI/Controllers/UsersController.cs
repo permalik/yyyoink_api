@@ -46,24 +46,19 @@ public class UsersController : APIController
     }
 
     [HttpGet("{id:guid}")]
-    public IActionResult GetUser(Guid id)
+    public Task<IActionResult> GetUser(Guid id)
     {
-        ErrorOr<User> getUserResult = _userService.GetUser(id);
+        Task<ErrorOr<User>> getUserResult = _userService.GetUser(id);
         return getUserResult.Match(
             user => Ok(MapUserResponse(user)),
             errors => Problem(errors)
         );
     }
 
-    [HttpPatch("{id:guid}")]
-    public IActionResult UpdateUser(Guid id, UpdateUserRequest request)
+    [HttpPatch("update/{id:guid}")]
+    public Task<IActionResult> UpdateUser(Guid id, UpdateUserRequest request)
     {
-        var user = new User(
-            id,
-            request.Email,
-            request.Password
-        );
-        ErrorOr<Updated> updatedUserResult = _userService.UpdateUser(user);
+        Task<ErrorOr<Updated>> updatedUserResult = _userService.UpdateUser(id, request.Email, request.Password);
         return updatedUserResult.Match(
             updated => NoContent(),
             errors => Problem(errors)

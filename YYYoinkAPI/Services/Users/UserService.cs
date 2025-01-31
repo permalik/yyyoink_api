@@ -40,23 +40,27 @@ public class UserService : IUserService
         return user;
     }
 
-    public ErrorOr<User> GetUser(Guid id)
+    public async Task<ErrorOr<User>> GetUser(Guid id)
     {
-        if (_users.TryGetValue(id, out var user))
+        var connStr = Environment.GetEnvironmentVariable("PG_CS") ?? string.Empty;
+        var db = new Database(connStr);
+        var user = await db.GetUserByIdAsync(id);
+        if (user is null)
         {
-            return user;
+            return UserErrors.NotFound;
         }
-
-        return UserErrors.NotFound;
+        return user;
     }
 
-    public ErrorOr<Updated> UpdateUser(User user)
+    public async Task<ErrorOr<Updated>> UpdateUser(Guid uuid, string email, string password)
     {
-        if (_users.TryGetValue(user.Uuid, out var currentUser))
+        var connStr = Environment.GetEnvironmentVariable("PG_CS") ?? string.Empty;
+        var db = new Database(connStr);
+        var user = await db.UpdateUserAsync(uuid, email, password);
+        if (user is null)
         {
-            _users[user.Uuid] = user;
+            return UserErrors.NotFound;
         }
-
         return Result.Updated;
     }
 
