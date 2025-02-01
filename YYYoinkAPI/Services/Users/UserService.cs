@@ -1,10 +1,8 @@
 using ErrorOr;
-using Serilog;
 using YYYoinkAPI.Logger;
 using YYYoinkAPI.Models;
 using YYYoinkAPI.ServiceErrors;
 using YYYoinkAPI.Services.Postgres;
-using ILogger = Serilog.ILogger;
 
 namespace YYYoinkAPI.Services.Users;
 
@@ -15,15 +13,16 @@ public class UserService : IUserService
     public async Task<ErrorOr<Created>> CreateUser(User user)
     {
         // TODO: assert
-        string connStr = Environment.GetEnvironmentVariable("PG_CS") ?? string.Empty;
+        var connStr = Environment.GetEnvironmentVariable("PG_CS") ?? string.Empty;
         var db = new Database(connStr);
+        var log = new YYYLogger().Log;
         var createdUser = await db.CreateUserAsync(user);
         if (createdUser is null)
         {
+            log.Error("{UserError} while executing {UserService}", nameof(UserErrors.NotFound), nameof(CreateUser));
             return UserErrors.NotFound;
         }
 
-        Console.WriteLine($"{user.Email} has been created");
         return Result.Created;
     }
 
@@ -32,31 +31,32 @@ public class UserService : IUserService
         // TODO: assert
         var connStr = Environment.GetEnvironmentVariable("PG_CS") ?? string.Empty;
         var db = new Database(connStr);
+        var log = new YYYLogger().Log;
         var user = await db.GetUserAsync(email);
         if (user is null)
         {
+            log.Error("{UserError} while executing {UserService}", nameof(UserErrors.NotFound), nameof(LoginUser));
             return UserErrors.NotFound;
         }
 
         if (user.Password != password)
         {
+            log.Error("{UserError} while executing {UserService}", nameof(UserErrors.Unauthorized), nameof(LoginUser));
             return UserErrors.Unauthorized;
         }
 
-        Console.WriteLine($"{user.Email} has been logged in");
         return user;
     }
 
     public async Task<ErrorOr<User>> GetUser(Guid id)
     {
-        ILogger log = new YYYLogger().Log;
-    
         var connStr = Environment.GetEnvironmentVariable("PG_CS") ?? string.Empty;
         var db = new Database(connStr);
+        var log = new YYYLogger().Log;
         var user = await db.GetUserByIdAsync(id);
-        log.Information("{UserError} while executing {UserService}", nameof(UserErrors.NotFound), nameof(GetUser));
         if (user is null)
         {
+            log.Error("{UserError} while executing {UserService}", nameof(UserErrors.NotFound), nameof(GetUser));
             return UserErrors.NotFound;
         }
 
@@ -67,9 +67,11 @@ public class UserService : IUserService
     {
         var connStr = Environment.GetEnvironmentVariable("PG_CS") ?? string.Empty;
         var db = new Database(connStr);
+        var log = new YYYLogger().Log;
         var user = await db.UpdateUserAsync(uuid, email, password);
         if (user is null)
         {
+            log.Error("{UserError} while executing {UserService}", nameof(UserErrors.NotFound), nameof(UpdateUser));
             return UserErrors.NotFound;
         }
 
