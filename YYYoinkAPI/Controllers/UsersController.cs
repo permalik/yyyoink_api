@@ -17,13 +17,14 @@ public class UsersController : APIController
         {
             throw new ArgumentNullException(nameof(userService), "userservice cannot be null");
         }
+
         _userService = userService;
     }
 
     [HttpPost]
     public Task<IActionResult> CreateUser(CreateUserRequest request)
     {
-        var user = new User(
+        User user = new User(
             Guid.NewGuid(),
             request.Email,
             request.Password
@@ -65,10 +66,10 @@ public class UsersController : APIController
         );
     }
 
-    [HttpDelete("{id:guid}")]
-    public IActionResult DeleteUser(Guid id)
+    [HttpDelete("delete/{id:guid}")]
+    public Task<IActionResult> DeleteUser(Guid id)
     {
-        ErrorOr<Deleted> deleteUserResult = _userService.DeleteUser(id);
+        Task<ErrorOr<Deleted>> deleteUserResult = _userService.DeleteUser(id);
         return deleteUserResult.Match(
             deleted => NoContent(),
             errors => Problem(errors)
