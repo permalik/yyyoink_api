@@ -1,13 +1,16 @@
 using ErrorOr;
+using Serilog;
 using YYYoinkAPI.Models;
 using YYYoinkAPI.ServiceErrors;
 using YYYoinkAPI.Services.Postgres;
+using ILogger = Serilog.ILogger;
 
 namespace YYYoinkAPI.Services.Users;
 
 public class UserService : IUserService
 {
     private static readonly Dictionary<Guid, User> _users = new();
+
     public async Task<ErrorOr<Created>> CreateUser(User user)
     {
         // TODO: assert
@@ -16,8 +19,10 @@ public class UserService : IUserService
         var createdUser = await db.CreateUserAsync(user);
         if (createdUser is null)
         {
+            // log.Error("{UserError} while executing {ServiceName}", nameof(UserErrors.NotFound), nameof(CreateUser));
             return UserErrors.NotFound;
         }
+
         Console.WriteLine($"{user.Email} has been created");
         return Result.Created;
     }
@@ -32,23 +37,32 @@ public class UserService : IUserService
         {
             return UserErrors.NotFound;
         }
+
         if (user.Password != password)
         {
             return UserErrors.Unauthorized;
         }
+
         Console.WriteLine($"{user.Email} has been logged in");
         return user;
     }
 
     public async Task<ErrorOr<User>> GetUser(Guid id)
     {
+    ILogger log = new LoggerConfiguration()
+        .WriteTo.Console()
+        .WriteTo.File("./logs/log.txt", rollingInterval: RollingInterval.Day)
+        .CreateLogger();
+    
         var connStr = Environment.GetEnvironmentVariable("PG_CS") ?? string.Empty;
         var db = new Database(connStr);
         var user = await db.GetUserByIdAsync(id);
+        log.Information("{UserError} while executing {UserService}", nameof(UserErrors.NotFound), nameof(GetUser));
         if (user is null)
         {
             return UserErrors.NotFound;
         }
+
         return user;
     }
 
@@ -61,6 +75,7 @@ public class UserService : IUserService
         {
             return UserErrors.NotFound;
         }
+
         return Result.Updated;
     }
 
