@@ -1,5 +1,6 @@
 using ErrorOr;
 using Serilog;
+using YYYoinkAPI.Logger;
 using YYYoinkAPI.Models;
 using YYYoinkAPI.ServiceErrors;
 using YYYoinkAPI.Services.Postgres;
@@ -19,7 +20,6 @@ public class UserService : IUserService
         var createdUser = await db.CreateUserAsync(user);
         if (createdUser is null)
         {
-            // log.Error("{UserError} while executing {ServiceName}", nameof(UserErrors.NotFound), nameof(CreateUser));
             return UserErrors.NotFound;
         }
 
@@ -49,10 +49,7 @@ public class UserService : IUserService
 
     public async Task<ErrorOr<User>> GetUser(Guid id)
     {
-    ILogger log = new LoggerConfiguration()
-        .WriteTo.Console()
-        .WriteTo.File("./logs/log.txt", rollingInterval: RollingInterval.Day)
-        .CreateLogger();
+        ILogger log = new YYYLogger().Log;
     
         var connStr = Environment.GetEnvironmentVariable("PG_CS") ?? string.Empty;
         var db = new Database(connStr);
