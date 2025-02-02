@@ -16,6 +16,7 @@ public class APIController : ControllerBase
             ErrorType.Validation => StatusCodes.Status400BadRequest,
             ErrorType.Conflict => StatusCodes.Status409Conflict,
             ErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
+            ErrorType.Failure => StatusCodes.Status500InternalServerError,
             _ => StatusCodes.Status500InternalServerError
         };
         return Problem(statusCode: statusCode, title: firstError.Description);
