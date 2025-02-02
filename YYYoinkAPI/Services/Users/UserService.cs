@@ -14,7 +14,7 @@ public class UserService : IUserService
     public async Task<ErrorOr<Created>> CreateUser(User user)
     {
         // TODO: assert
-        string connStr = Environment.GetEnvironmentVariable("PG_CS") ?? string.Empty;
+        string? connStr = Environment.GetEnvironmentVariable("PG_CS") ?? string.Empty;
         Database db = new Database(connStr);
         ILogger log = new YYYLogger().Log;
         User createdUser = await db.CreateUserAsync(user);
@@ -30,7 +30,7 @@ public class UserService : IUserService
     public async Task<ErrorOr<User>> LoginUser(string email, string password)
     {
         // TODO: assert
-        string connStr = Environment.GetEnvironmentVariable("PG_CS") ?? string.Empty;
+        string? connStr = Environment.GetEnvironmentVariable("PG_CS") ?? string.Empty;
         Database db = new Database(connStr);
         ILogger log = new YYYLogger().Log;
         User user = await db.GetUserAsync(email);
@@ -51,7 +51,7 @@ public class UserService : IUserService
 
     public async Task<ErrorOr<User>> GetUser(Guid id)
     {
-        string connStr = Environment.GetEnvironmentVariable("PG_CS") ?? string.Empty;
+        string? connStr = Environment.GetEnvironmentVariable("PG_CS") ?? string.Empty;
         Database db = new Database(connStr);
         ILogger log = new YYYLogger().Log;
         User user = await db.GetUserByIdAsync(id);

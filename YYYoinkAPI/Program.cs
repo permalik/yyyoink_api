@@ -1,16 +1,42 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using YYYoinkAPI.Services.Users;
 using YYYoinkAPI.utils;
 
-var root = Directory.GetCurrentDirectory();
-var dotenv = Path.Combine(root, ".env");
+string root = Directory.GetCurrentDirectory();
+string dotenv = Path.Combine(root, ".env");
 DotEnv.Load(dotenv);
 
-var CORSPolicy = "cors_policy";
+string CORSPolicy = "cors_policy";
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 {
+    string? keyStr = Environment.GetEnvironmentVariable("JWT_KEY") ?? string.Empty;
+    if (string.IsNullOrWhiteSpace(keyStr))
+    {
+        throw new InvalidOperationException("JWT_KEY is invalid or missing during JWT Generation");
+    }
+
+    byte[] key = Encoding.UTF8.GetBytes(keyStr);
+
     builder.Configuration.AddEnvironmentVariables();
+    builder.Services.AddAuthorization();
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
+                ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
+                ValidateIssuerSigningKey = true,
+                ValidateLifetime = true,
+                ValidateIssuer = true,
+                ValidateAudience = true
+            };
+        });
     builder.Services.AddCors(
         options =>
         {
@@ -28,8 +54,10 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddOpenApi();
 }
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 {
+    app.UseAuthentication();
+    app.UseAuthorization();
     if (app.Environment.IsDevelopment())
     {
         app.MapOpenApi();
@@ -43,6 +71,7 @@ var app = builder.Build();
     app.UseExceptionHandler("/error");
     // app.UseHttpsRedirection();
     app.UseCors(CORSPolicy);
-    app.MapControllers();
+    app.MapControllers()
+        .RequireAuthorization();
     app.Run();
 }
