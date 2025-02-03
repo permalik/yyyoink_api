@@ -56,6 +56,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 WebApplication app = builder.Build();
 {
+    app.UseCors(CORSPolicy);
     app.UseAuthentication();
     app.UseAuthorization();
     if (app.Environment.IsDevelopment())
@@ -70,7 +71,6 @@ WebApplication app = builder.Build();
 
     app.UseExceptionHandler("/error");
     // app.UseHttpsRedirection();
-    app.UseCors(CORSPolicy);
     app.MapControllers()
         .RequireAuthorization();
     app.Run();

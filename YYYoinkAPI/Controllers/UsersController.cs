@@ -1,7 +1,10 @@
 using ErrorOr;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Any;
 using YYYoinkAPI.Contracts.User;
 using YYYoinkAPI.Models;
+using YYYoinkAPI.ServiceErrors;
+using YYYoinkAPI.Services.AuthN;
 using YYYoinkAPI.Services.Users;
 
 namespace YYYoinkAPI.Controllers;
@@ -39,7 +42,7 @@ public class UsersController : APIController
     [HttpPost("login")]
     public Task<IActionResult> LoginUser(LoginUserRequest request)
     {
-        Task<ErrorOr<User>> loginUserResult = _userService.LoginUser(request.Email, request.Password);
+        Task<ErrorOr<User>> loginUserResult = _userService.LoginUser(request.Email, request.Password, Response);
         return loginUserResult.Match(
             loggedIn => Ok(MapUserResponse(loggedIn)),
             errors => Problem(errors)
@@ -47,9 +50,9 @@ public class UsersController : APIController
     }
 
     [HttpGet("{id:guid}")]
-    public Task<IActionResult> GetUser(Guid id)
+    public Task<IActionResult> GetUserById(Guid id)
     {
-        Task<ErrorOr<User>> getUserResult = _userService.GetUser(id);
+        Task<ErrorOr<User>> getUserResult = _userService.GetUserById(id);
         return getUserResult.Match(
             user => Ok(MapUserResponse(user)),
             errors => Problem(errors)
@@ -84,7 +87,7 @@ public class UsersController : APIController
             user.Password
         );
     }
-
+    
     private CreatedAtActionResult CreatedAtGetUser(User user)
     {
         return CreatedAtAction(

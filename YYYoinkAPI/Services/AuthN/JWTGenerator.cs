@@ -6,9 +6,9 @@ using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegiste
 
 namespace YYYoinkAPI.Services.AuthN;
 
-public class JWTGenerator
+public class JwtGenerator
 {
-    public string GenerateJWT(Guid uuid, string email)
+    public string GenerateJwt(Guid uuid, string email)
     {
         JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
         string? keyStr = Environment.GetEnvironmentVariable("JWT_KEY") ?? string.Empty;
