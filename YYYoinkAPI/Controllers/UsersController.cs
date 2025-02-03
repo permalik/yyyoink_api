@@ -1,11 +1,14 @@
 using ErrorOr;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Any;
 using YYYoinkAPI.Contracts.User;
+using YYYoinkAPI.Logger;
 using YYYoinkAPI.Models;
 using YYYoinkAPI.ServiceErrors;
 using YYYoinkAPI.Services.AuthN;
 using YYYoinkAPI.Services.Users;
+using ILogger = Serilog.ILogger;
 
 namespace YYYoinkAPI.Controllers;
 
@@ -42,6 +45,8 @@ public class UsersController : APIController
     [HttpPost("login")]
     public Task<IActionResult> LoginUser(LoginUserRequest request)
     {
+        ILogger log = new YYYLogger().Log;
+        log.Information("LoginUser Controller starting...");
         Task<ErrorOr<User>> loginUserResult = _userService.LoginUser(request.Email, request.Password, Response);
         return loginUserResult.Match(
             loggedIn => Ok(MapUserResponse(loggedIn)),
@@ -50,6 +55,7 @@ public class UsersController : APIController
     }
 
     [HttpGet("{id:guid}")]
+    [Authorize]
     public Task<IActionResult> GetUserById(Guid id)
     {
         Task<ErrorOr<User>> getUserResult = _userService.GetUserById(id);
