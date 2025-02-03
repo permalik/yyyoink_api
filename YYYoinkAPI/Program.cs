@@ -44,6 +44,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
                 policy =>
                 {
                     policy.WithOrigins("http://localhost:5173")
+                        .AllowCredentials()
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });

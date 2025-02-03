@@ -106,8 +106,6 @@ public class Database
 
     public async Task<User?> GetUserByEmailAsync(string inputEmail)
     {
-        ILogger log = new YYYLogger().Log;
-        log.Information("GetUserByEmailAsync Database starting...");
         await using NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
         await conn.OpenAsync();
         string? uuid = null;
@@ -130,7 +128,6 @@ public class Database
 
             if (!string.IsNullOrEmpty(uuid) && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
             {
-                Console.Write($"uuid: {uuid}, email: {email}, password: {password}");
                 return new User(
                     new Guid(uuid),
                     email,

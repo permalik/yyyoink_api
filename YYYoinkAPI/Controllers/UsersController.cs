@@ -45,8 +45,6 @@ public class UsersController : APIController
     [HttpPost("login")]
     public Task<IActionResult> LoginUser(LoginUserRequest request)
     {
-        ILogger log = new YYYLogger().Log;
-        log.Information("LoginUser Controller starting...");
         Task<ErrorOr<User>> loginUserResult = _userService.LoginUser(request.Email, request.Password, Response);
         return loginUserResult.Match(
             loggedIn => Ok(MapUserResponse(loggedIn)),

@@ -29,7 +29,6 @@ public class UserService : IUserService
     public async Task<ErrorOr<User>> LoginUser(string email, string password, HttpResponse response)
     {
         ILogger log = new YYYLogger().Log;
-        log.Information("LoginUser Service starting...");
         // TODO: assert
         string? connStr = Environment.GetEnvironmentVariable("PG_CS") ?? string.Empty;
         Database db = new Database(connStr);
@@ -48,7 +47,6 @@ public class UserService : IUserService
 
         JwtGenerator jwtGenerator = new JwtGenerator();
         string token = jwtGenerator.GenerateJwt(user.Uuid, user.Email);
-        log.Information($"Created token: {token}");
 
         SetAuthCookie(response, token);
 
@@ -110,8 +108,6 @@ public class UserService : IUserService
             Expires = DateTime.UtcNow.AddMinutes(15)
         };
 
-        ILogger log = new YYYLogger().Log;
-        log.Information($"Set Cookie: {response}, {token}");
         response.Cookies.Append("AuthToken", token, cookieOptions);
     }
 }
