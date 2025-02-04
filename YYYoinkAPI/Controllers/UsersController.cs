@@ -97,6 +97,7 @@ public class UsersController : APIController
     {
         return new AuthNResponse(
             credentials.Email,
+            credentials.Uuid,
             credentials.AccessToken,
             credentials.RefreshToken
         );

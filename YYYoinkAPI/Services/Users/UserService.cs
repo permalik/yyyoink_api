@@ -56,8 +56,9 @@ public class UserService : IUserService
 
         return new AuthNCredentials(
             user.Email,
+            user.Uuid.ToString(),
             token,
-            user.RefreshToken
+            user.RefreshToken.ToString()
         );
     }
 
