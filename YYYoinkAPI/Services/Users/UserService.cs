@@ -26,7 +26,7 @@ public class UserService : IUserService
         return Result.Created;
     }
 
-    public async Task<ErrorOr<AuthNCredentials>> AuthN(string email, string password, string refreshToken)
+    public async Task<ErrorOr<AuthNCredentials>> AuthN(string email, string password, string? refreshToken)
     {
         ILogger log = new YYYLogger().Log;
         // TODO: assert
