@@ -1,6 +1,6 @@
 namespace YYYoinkAPI.Contracts.User;
 
-public record LoginUserRequest(
+public record AuthNRequest(
     string Email,
     string Password,
     string? RefreshToken

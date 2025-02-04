@@ -26,7 +26,7 @@ public class UserService : IUserService
         return Result.Created;
     }
 
-    public async Task<ErrorOr<User>> LoginUser(string email, string password, HttpResponse response)
+    public async Task<ErrorOr<AuthNCredentials>> AuthN(string email, string password, string refreshToken)
     {
         ILogger log = new YYYLogger().Log;
         // TODO: assert
@@ -35,22 +35,30 @@ public class UserService : IUserService
         User? user = await db.GetUserByEmailAsync(email);
         if (user is null)
         {
-            log.Error("{UserError} while executing {UserService}", nameof(UserErrors.NotFound), nameof(LoginUser));
+            log.Error("{UserError} while executing {UserService}", nameof(UserErrors.NotFound), nameof(AuthN));
             return UserErrors.NotFound;
         }
 
         if (user.Password != password)
         {
-            log.Error("{UserError} while executing {UserService}", nameof(UserErrors.Unauthorized), nameof(LoginUser));
+            log.Error("{UserError} while executing {UserService}", nameof(UserErrors.Unauthorized), nameof(AuthN));
             return UserErrors.Unauthorized;
         }
+
+        // TODO: validate refresh token
+        // if (user.RefreshToken.ToString() != refreshToken)
+        // {
+        //     log.Error("{UserError} while executing {UserService}", nameof(UserErrors.Unauthorized), nameof(LoginUser));
+        // }
 
         JwtGenerator jwtGenerator = new JwtGenerator();
         string token = jwtGenerator.GenerateJwt(user.Uuid, user.Email);
 
-        SetAuthCookie(response, token);
-
-        return user;
+        return new AuthNCredentials(
+            user.Email,
+            token,
+            user.RefreshToken
+        );
     }
 
     public async Task<ErrorOr<User>> GetUserById(Guid id)
@@ -96,18 +104,5 @@ public class UserService : IUserService
 
         log.Error("{UserError} while executing {UserService}", nameof(UserErrors.NotFound), nameof(DeleteUser));
         return UserErrors.Failure;
-    }
-
-    private void SetAuthCookie(HttpResponse response, string token)
-    {
-        CookieOptions cookieOptions = new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Strict,
-            Expires = DateTime.UtcNow.AddMinutes(15)
-        };
-
-        response.Cookies.Append("AuthToken", token, cookieOptions);
     }
 }

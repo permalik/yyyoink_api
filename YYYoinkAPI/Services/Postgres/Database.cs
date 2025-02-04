@@ -1,3 +1,4 @@
+using System.Data;
 using Npgsql;
 using YYYoinkAPI.Logger;
 using YYYoinkAPI.Models;
@@ -22,11 +23,12 @@ public class Database
         string? uuid = null;
         string? email = null;
         string? password = null;
+        string? refreshToken = null;
         try
         {
             // TODO: impl parameterized queries to prevent sql inj (https://www.npgsql.org/doc/basic-usage.html)
             string insert =
-                $"INSERT INTO accounts (email, password, uuid) VALUES ('{user.Email}', '{user.Password}', '{user.Uuid}')";
+                $"INSERT INTO accounts (email, password, uuid, refresh_token) VALUES ('{user.Email}', '{user.Password}', '{user.Uuid}', '{user.RefreshToken}')";
             string select = $"SELECT * FROM accounts WHERE email = '{user.Email}'";
             await using NpgsqlBatch batch = new NpgsqlBatch(conn)
             {
@@ -43,15 +45,22 @@ public class Database
                     uuid = reader.IsDBNull(4) ? null : reader.GetString(4);
                     email = reader.IsDBNull(1) ? null : reader.GetString(1);
                     password = reader.IsDBNull(2) ? null : reader.GetString(2);
+                    refreshToken = reader.IsDBNull(5) ? null : reader.GetString(5);
                 }
             }
 
-            if (!string.IsNullOrEmpty(uuid) && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
+            if (
+                !string.IsNullOrEmpty(uuid) &&
+                !string.IsNullOrEmpty(email) &&
+                !string.IsNullOrEmpty(password) &&
+                !string.IsNullOrEmpty(refreshToken)
+            )
             {
                 return new User(
                     new Guid(uuid),
                     email,
-                    password
+                    password,
+                    new Guid(refreshToken)
                 );
             }
         }
@@ -71,6 +80,7 @@ public class Database
         string? uuid = null;
         string? email = null;
         string? password = null;
+        string? refreshToken = null;
 
         try
         {
@@ -83,15 +93,22 @@ public class Database
                     uuid = reader.IsDBNull(4) ? null : reader.GetString(4);
                     email = reader.IsDBNull(1) ? null : reader.GetString(1);
                     password = reader.IsDBNull(2) ? null : reader.GetString(2);
+                    refreshToken = reader.IsDBNull(5) ? null : reader.GetString(5);
                 }
             }
 
-            if (!string.IsNullOrEmpty(uuid) && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
+            if (
+                !string.IsNullOrEmpty(uuid) &&
+                !string.IsNullOrEmpty(email) &&
+                !string.IsNullOrEmpty(password) &&
+                !string.IsNullOrEmpty(refreshToken)
+            )
             {
                 return new User(
                     new Guid(uuid),
                     email,
-                    password
+                    password,
+                    new Guid(refreshToken)
                 );
             }
         }
@@ -111,6 +128,7 @@ public class Database
         string? uuid = null;
         string? email = null;
         string? password = null;
+        string? refreshToken = null;
 
         try
         {
@@ -123,15 +141,22 @@ public class Database
                     uuid = reader.IsDBNull(4) ? null : reader.GetString(4);
                     email = reader.IsDBNull(1) ? null : reader.GetString(1);
                     password = reader.IsDBNull(2) ? null : reader.GetString(2);
+                    refreshToken = reader.IsDBNull(5) ? null : reader.GetString(5);
                 }
             }
 
-            if (!string.IsNullOrEmpty(uuid) && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
+            if (
+                !string.IsNullOrEmpty(uuid) &&
+                !string.IsNullOrEmpty(email) &&
+                !string.IsNullOrEmpty(password) &&
+                !string.IsNullOrEmpty(refreshToken)
+            )
             {
                 return new User(
                     new Guid(uuid),
                     email,
-                    password
+                    password,
+                    new Guid(refreshToken)
                 );
             }
         }
@@ -151,6 +176,7 @@ public class Database
         string? uuid = null;
         string? email = null;
         string? password = null;
+        string? refreshToken = null;
 
         try
         {
@@ -172,15 +198,22 @@ public class Database
                     uuid = reader.IsDBNull(4) ? null : reader.GetString(4);
                     email = reader.IsDBNull(1) ? null : reader.GetString(1);
                     password = reader.IsDBNull(2) ? null : reader.GetString(2);
+                    refreshToken = reader.IsDBNull(5) ? null : reader.GetString(5);
                 }
             }
 
-            if (!string.IsNullOrEmpty(uuid) && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
+            if (
+                !string.IsNullOrEmpty(uuid) &&
+                !string.IsNullOrEmpty(email) &&
+                !string.IsNullOrEmpty(password) &&
+                !string.IsNullOrEmpty(refreshToken)
+                )
             {
                 return new User(
                     new Guid(uuid),
                     email,
-                    password
+                    password,
+                    new Guid(refreshToken)
                 );
             }
         }
