@@ -1,3 +1,4 @@
+using Confluent.Kafka;
 using ErrorOr;
 using YYYoinkAPI.Logger;
 using YYYoinkAPI.Models;
@@ -26,7 +27,7 @@ public class UserService : IUserService
         return Result.Created;
     }
 
-    public async Task<ErrorOr<AuthNCredentials>> AuthN(string email, string password, string? refreshToken)
+    public async Task<ErrorOr<AuthNCredentials>> AuthN(string email, string password)
     {
         ILogger log = new YYYLogger().Log;
         // TODO: assert
@@ -57,8 +58,8 @@ public class UserService : IUserService
         return new AuthNCredentials(
             user.Email,
             user.Uuid.ToString(),
-            token,
-            user.RefreshToken.ToString()
+            user.RefreshToken.ToString(),
+            token
         );
     }
 

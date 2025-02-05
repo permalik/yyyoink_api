@@ -31,9 +31,9 @@ public class UsersController : APIController
     public Task<IActionResult> CreateUser(CreateUserRequest request)
     {
         User user = new User(
-            Guid.NewGuid(),
             request.Email,
             request.Password,
+            Guid.NewGuid(),
             Guid.NewGuid()
         );
         Task<ErrorOr<Created>> createUserResult = _userService.CreateUser(user);
@@ -46,7 +46,7 @@ public class UsersController : APIController
     [HttpPost("authenticate")]
     public Task<IActionResult> AuthN(LoginUserRequest request)
     {
-        Task<ErrorOr<AuthNCredentials>> loginUserResult = _userService.AuthN(request.Email, request.Password, request.RefreshToken);
+        Task<ErrorOr<AuthNCredentials>> loginUserResult = _userService.AuthN(request.Email, request.Password);
         return loginUserResult.Match(
             loggedIn => Ok(MapAuthNResponse(loggedIn)),
             errors => Problem(errors)
@@ -98,8 +98,8 @@ public class UsersController : APIController
         return new AuthNResponse(
             credentials.Email,
             credentials.Uuid,
-            credentials.AccessToken,
-            credentials.RefreshToken
+            credentials.RefreshToken,
+            credentials.AccessToken
         );
     }
 

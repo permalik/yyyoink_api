@@ -1,0 +1,1 @@
+2025-02-04 18:26:47.208 -06:00 [ERR] NotFound while executing AuthN

@@ -20,9 +20,9 @@ public class Database
     {
         await using NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
         await conn.OpenAsync();
-        string? uuid = null;
         string? email = null;
         string? password = null;
+        string? uuid = null;
         string? refreshToken = null;
         try
         {
@@ -50,16 +50,16 @@ public class Database
             }
 
             if (
-                !string.IsNullOrEmpty(uuid) &&
                 !string.IsNullOrEmpty(email) &&
                 !string.IsNullOrEmpty(password) &&
+                !string.IsNullOrEmpty(uuid) &&
                 !string.IsNullOrEmpty(refreshToken)
             )
             {
                 return new User(
-                    new Guid(uuid),
                     email,
                     password,
+                    new Guid(uuid),
                     new Guid(refreshToken)
                 );
             }
@@ -77,9 +77,9 @@ public class Database
     {
         await using NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
         await conn.OpenAsync();
-        string? uuid = null;
         string? email = null;
         string? password = null;
+        string? uuid = null;
         string? refreshToken = null;
 
         try
@@ -90,24 +90,24 @@ public class Database
             {
                 if (await reader.ReadAsync())
                 {
-                    uuid = reader.IsDBNull(4) ? null : reader.GetString(4);
                     email = reader.IsDBNull(1) ? null : reader.GetString(1);
                     password = reader.IsDBNull(2) ? null : reader.GetString(2);
+                    uuid = reader.IsDBNull(4) ? null : reader.GetString(4);
                     refreshToken = reader.IsDBNull(5) ? null : reader.GetString(5);
                 }
             }
 
             if (
-                !string.IsNullOrEmpty(uuid) &&
                 !string.IsNullOrEmpty(email) &&
                 !string.IsNullOrEmpty(password) &&
+                !string.IsNullOrEmpty(uuid) &&
                 !string.IsNullOrEmpty(refreshToken)
             )
             {
                 return new User(
-                    new Guid(uuid),
                     email,
                     password,
+                    new Guid(uuid),
                     new Guid(refreshToken)
                 );
             }
@@ -125,9 +125,9 @@ public class Database
     {
         await using NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
         await conn.OpenAsync();
-        string? uuid = null;
         string? email = null;
         string? password = null;
+        string? uuid = null;
         string? refreshToken = null;
 
         try
@@ -138,24 +138,24 @@ public class Database
             {
                 if (await reader.ReadAsync())
                 {
-                    uuid = reader.IsDBNull(4) ? null : reader.GetString(4);
                     email = reader.IsDBNull(1) ? null : reader.GetString(1);
                     password = reader.IsDBNull(2) ? null : reader.GetString(2);
+                    uuid = reader.IsDBNull(4) ? null : reader.GetString(4);
                     refreshToken = reader.IsDBNull(5) ? null : reader.GetString(5);
                 }
             }
 
             if (
-                !string.IsNullOrEmpty(uuid) &&
                 !string.IsNullOrEmpty(email) &&
                 !string.IsNullOrEmpty(password) &&
+                !string.IsNullOrEmpty(uuid) &&
                 !string.IsNullOrEmpty(refreshToken)
             )
             {
                 return new User(
-                    new Guid(uuid),
                     email,
                     password,
+                    new Guid(uuid),
                     new Guid(refreshToken)
                 );
             }
@@ -173,9 +173,9 @@ public class Database
     {
         await using NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
         await conn.OpenAsync();
-        string? uuid = null;
         string? email = null;
         string? password = null;
+        string? uuid = null;
         string? refreshToken = null;
 
         try
@@ -195,24 +195,24 @@ public class Database
             {
                 if (await reader.ReadAsync())
                 {
-                    uuid = reader.IsDBNull(4) ? null : reader.GetString(4);
                     email = reader.IsDBNull(1) ? null : reader.GetString(1);
                     password = reader.IsDBNull(2) ? null : reader.GetString(2);
+                    uuid = reader.IsDBNull(4) ? null : reader.GetString(4);
                     refreshToken = reader.IsDBNull(5) ? null : reader.GetString(5);
                 }
             }
 
             if (
-                !string.IsNullOrEmpty(uuid) &&
                 !string.IsNullOrEmpty(email) &&
                 !string.IsNullOrEmpty(password) &&
+                !string.IsNullOrEmpty(uuid) &&
                 !string.IsNullOrEmpty(refreshToken)
                 )
             {
                 return new User(
-                    new Guid(uuid),
                     email,
                     password,
+                    new Guid(uuid),
                     new Guid(refreshToken)
                 );
             }
