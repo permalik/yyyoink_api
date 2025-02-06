@@ -31,9 +31,9 @@ public class UsersController : APIController
     public Task<IActionResult> CreateUser(CreateUserRequest request)
     {
         User user = new User(
+            Guid.NewGuid(),
             request.Email,
             request.Password,
-            Guid.NewGuid(),
             Guid.NewGuid()
         );
         Task<ErrorOr<Created>> createUserResult = _userService.CreateUser(user);
@@ -96,8 +96,8 @@ public class UsersController : APIController
     private static AuthNResponse MapAuthNResponse(AuthNCredentials credentials)
     {
         return new AuthNResponse(
-            credentials.Email,
             credentials.Uuid,
+            credentials.Email,
             credentials.RefreshToken,
             credentials.AccessToken
         );

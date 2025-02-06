@@ -1,8 +1,8 @@
 namespace YYYoinkAPI.Contracts.User;
 
 public record AuthNResponse(
-    string Email,
     string Uuid,
+    string Email,
     string RefreshToken,
     string AccessToken
 );
