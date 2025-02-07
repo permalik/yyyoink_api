@@ -53,13 +53,14 @@ public class UserService : IUserService
         // }
 
         JwtGenerator jwtGenerator = new JwtGenerator();
-        string token = jwtGenerator.GenerateJwt(user.Uuid, user.Email);
+        string accessToken = jwtGenerator.GenerateJwt(user.Uuid, user.Email);
+        Guid refreshToken = Guid.NewGuid();
 
         return new AuthNCredentials(
             user.Email,
             user.Uuid.ToString(),
-            user.RefreshToken.ToString(),
-            token
+            refreshToken.ToString(),
+            accessToken
         );
     }
 

@@ -29,7 +29,7 @@ public class Database
         {
             // TODO: impl parameterized queries to prevent sql inj (https://www.npgsql.org/doc/basic-usage.html)
             string insert =
-                $"INSERT INTO accounts (created_at, uuid, email, password) VALUES ('{createdAt}', ''{user.Uuid}', '{user.Email}', '{user.Password}')";
+                $"INSERT INTO accounts (created_at, uuid, email, password) VALUES ('{createdAt}', '{user.Uuid}', '{user.Email}', '{user.Password}')";
             string select = $"SELECT * FROM accounts WHERE email = '{user.Email}'";
             await using NpgsqlBatch batch = new NpgsqlBatch(conn)
             {

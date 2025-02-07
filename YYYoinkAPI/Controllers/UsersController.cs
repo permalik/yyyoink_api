@@ -34,7 +34,7 @@ public class UsersController : APIController
             Guid.NewGuid(),
             request.Email,
             request.Password,
-            Guid.NewGuid()
+            null
         );
         Task<ErrorOr<Created>> createUserResult = _userService.CreateUser(user);
         return createUserResult.Match(
