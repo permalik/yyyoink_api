@@ -127,13 +127,67 @@ public class Database
         string? uuid = null;
         string? email = null;
         string? password = null;
-        string? refreshToken = null;
 
         try
         {
             string stmt = $"SELECT * FROM accounts WHERE email = '{inputEmail}'";
             await using (NpgsqlCommand cmd = new NpgsqlCommand(stmt, conn))
             await using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
+            {
+                if (await reader.ReadAsync())
+                {
+                    uuid = reader.IsDBNull(3) ? null : reader.GetString(3);
+                    email = reader.IsDBNull(4) ? null : reader.GetString(4);
+                    password = reader.IsDBNull(5) ? null : reader.GetString(5);
+                }
+            }
+
+            if (
+                !string.IsNullOrEmpty(uuid) &&
+                !string.IsNullOrEmpty(email) &&
+                !string.IsNullOrEmpty(password)
+            )
+            {
+                return new User(
+                    new Guid(uuid),
+                    email,
+                    password,
+                    null
+                );
+            }
+        }
+        catch (Exception exc)
+        {
+            Console.WriteLine($"error retrieving user: {exc.Message}");
+            throw;
+        }
+
+        return null;
+    }
+
+    public async Task<User?> UserAuthN(string inputEmail)
+    {
+        await using NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
+        await conn.OpenAsync();
+        string? uuid = null;
+        string? email = null;
+        string? password = null;
+        string? refreshToken = null;
+        try
+        {
+            Guid newRefreshToken = Guid.NewGuid();
+            string insert =
+                $"UPDATE accounts SET refresh_token = '{newRefreshToken}' WHERE email = '{inputEmail}'";
+            string stmt = $"SELECT * FROM accounts WHERE email = '{inputEmail}'";
+            await using NpgsqlBatch batch = new NpgsqlBatch(conn)
+            {
+                BatchCommands =
+                {
+                    new NpgsqlBatchCommand(insert),
+                    new NpgsqlBatchCommand(stmt)
+                }
+            };
+            await using (NpgsqlDataReader reader = await batch.ExecuteReaderAsync())
             {
                 if (await reader.ReadAsync())
                 {
@@ -194,10 +248,10 @@ public class Database
             {
                 if (await reader.ReadAsync())
                 {
-                    uuid = reader.IsDBNull(4) ? null : reader.GetString(4);
-                    email = reader.IsDBNull(1) ? null : reader.GetString(1);
-                    password = reader.IsDBNull(2) ? null : reader.GetString(2);
-                    refreshToken = reader.IsDBNull(5) ? null : reader.GetString(5);
+                    uuid = reader.IsDBNull(3) ? null : reader.GetString(3);
+                    email = reader.IsDBNull(4) ? null : reader.GetString(4);
+                    password = reader.IsDBNull(5) ? null : reader.GetString(5);
+                    refreshToken = reader.IsDBNull(6) ? null : reader.GetString(6);
                 }
             }
 
@@ -206,7 +260,7 @@ public class Database
                 !string.IsNullOrEmpty(email) &&
                 !string.IsNullOrEmpty(password) &&
                 !string.IsNullOrEmpty(refreshToken)
-                )
+            )
             {
                 return new User(
                     new Guid(uuid),

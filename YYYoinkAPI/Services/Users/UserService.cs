@@ -46,6 +46,8 @@ public class UserService : IUserService
             return UserErrors.Unauthorized;
         }
 
+        User? authenticatedUser = await db.UserAuthN(user.Email);
+        
         // TODO: validate refresh token
         // if (user.RefreshToken.ToString() != refreshToken)
         // {
@@ -54,12 +56,11 @@ public class UserService : IUserService
 
         JwtGenerator jwtGenerator = new JwtGenerator();
         string accessToken = jwtGenerator.GenerateJwt(user.Uuid, user.Email);
-        Guid refreshToken = Guid.NewGuid();
 
         return new AuthNCredentials(
-            user.Email,
-            user.Uuid.ToString(),
-            refreshToken.ToString(),
+            authenticatedUser.Uuid.ToString(),
+            authenticatedUser.Email,
+            authenticatedUser.RefreshToken.ToString(),
             accessToken
         );
     }

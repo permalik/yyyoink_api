@@ -1,1 +1,4 @@
 2025-02-06 18:28:07.339 -06:00 [ERR] NotFound while executing AuthN
+2025-02-06 18:34:18.469 -06:00 [ERR] NotFound while executing AuthN
+2025-02-06 18:39:29.034 -06:00 [ERR] NotFound while executing AuthN
+2025-02-06 18:39:56.332 -06:00 [ERR] NotFound while executing AuthN
