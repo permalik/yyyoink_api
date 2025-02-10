@@ -1,14 +1,9 @@
 using ErrorOr;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Any;
 using YYYoinkAPI.Contracts.User;
-using YYYoinkAPI.Logger;
 using YYYoinkAPI.Models;
-using YYYoinkAPI.ServiceErrors;
-using YYYoinkAPI.Services.AuthN;
 using YYYoinkAPI.Services.Users;
-using ILogger = Serilog.ILogger;
 
 namespace YYYoinkAPI.Controllers;
 

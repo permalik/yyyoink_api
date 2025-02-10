@@ -309,4 +309,51 @@ public class Database
             throw;
         }
     }
+
+    public async Task<YYYoink?> CreateYYYoinkAsync(YYYoink yyyoink)
+    {
+        await using NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
+        await conn.OpenAsync();
+        DateTime timestamp = DateTime.UtcNow;
+        string createdAt = timestamp.ToString("yyyy-MM-dd HH:mm:ss.ffffff");
+        string? uuid = null;
+        string? title = null;
+        string? accountUuid = null;
+        try
+        {
+            string insert =
+                $"INSERT INTO yyyoinks (created_at, uuid, title, target_language, target_resolution, body, account_uuid)";
+            string select = $"SELECT * FROM yyyoinks WHERE account_uuid = '{yyyoink.AccountUuid}'";
+            await using NpgsqlBatch batch = new NpgsqlBatch(conn)
+            {
+                BatchCommands =
+                {
+                    new NpgsqlBatchCommand(insert),
+                    new NpgsqlBatchCommand(select)
+                }
+            };
+            await using (NpgsqlDataReader reader = await batch.ExecuteReaderAsync())
+            {
+                if (await reader.ReadAsync())
+                {
+                    uuid = reader.IsDBNull(3) ? null : reader.GetString(3);
+                    title = reader.IsDBNull(4) ? null : reader.GetString(4);
+                    accountUuid = reader.IsDBNull(11) ? null : reader.GetString(11);
+                }
+            }
+
+            if (
+                !string.IsNullOrEmpty(uuid) &&
+                !string.IsNullOrEmpty(title) &&
+                !string.IsNullOrEmpty(accountUuid)
+            )
+            {
+                return new YYYoink(
+                    new Guid(uuid),
+                    title,
+                    new Guid(accountUuid)
+                );
+            }
+        }
+    }
 }

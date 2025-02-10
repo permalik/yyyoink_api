@@ -52,6 +52,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
     );
     builder.Services.AddControllers();
     builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped<IYYYoinkService, YYYoinkService>();
     builder.Services.AddOpenApi();
 }
 
